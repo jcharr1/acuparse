@@ -53,8 +53,8 @@ if [ "$1" = 'acuparse' ]; then
   }
 
   function _set_system_timezone() {
-    rm /etc/localtime
-    rm /etc/timezone
+    rm -f /etc/localtime
+    rm -f /etc/timezone
     ln -s ../usr/share/zoneinfo/"${TZ}" /etc/localtime
     echo "${TZ}" >/etc/timezone
   }

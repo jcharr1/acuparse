@@ -66,6 +66,33 @@ jobs:
       - id: version
         run: echo "version=$(jq -r .VERSION .version)" >> "$GITHUB_OUTPUT"
 
+      - name: Build image for smoke test
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: acuparse:smoke
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Start the image against a real database and require the health endpoint before publishing
+      - name: Smoke test
+        run: |
+          docker network create smoke
+          DB_ENV="-e MYSQL_ROOT_PASSWORD=smoke -e MYSQL_PASSWORD=smoke -e MYSQL_DATABASE=acuparse -e MYSQL_USER=acuparse"
+          docker run -d --name db --network smoke $DB_ENV acuparse/mariadb
+          docker run -d --name acuparse --network smoke $DB_ENV -e MYSQL_HOSTNAME=db -e TZ=Etc/UTC acuparse:smoke
+          for i in $(seq 1 60); do
+            if docker exec acuparse curl --fail -s http://localhost/api/system/health; then
+              echo; echo "Healthy after $((i * 5))s"
+              docker exec acuparse php -v | head -1
+              exit 0
+            fi
+            sleep 5
+          done
+          docker logs acuparse 2>&1 | tail -60
+          exit 1
+
       - uses: docker/build-push-action@v6
         with:
           context: .

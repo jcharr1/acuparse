@@ -77,10 +77,19 @@ function _openSSL() {
   echo "END: OpenSSL Config"
 }
 
+function _mariadbClient() {
+  echo "Configuring MariaDB CLIENT"
+  # MariaDB 11.4+ clients require TLS by default; the database container does not offer it
+  mkdir -p /etc/mysql/conf.d
+  printf "[client]\nskip-ssl\n" >/etc/mysql/conf.d/acuparse-client.cnf
+  echo "END: MariaDB CLIENT"
+}
+
 echo "START: Acuparse Docker BUILD ..."
 _setFlags
 _permissions
 _logging
 _http
 _openSSL
+_mariadbClient
 echo "END: Acuparse BUILD"
