@@ -172,10 +172,10 @@ return (object)array(
         // Windy Settings
         'windy' => (object)array(
             'enabled' => false, // true or false
-            'id' => '', // ID
-            'key' => '', // Station API Key
-            'station' => '0', // Station ID
-            'url' => 'https://stations.windy.com/pws/update', // Windy API path
+            'id' => '', // Public ID, used for the station link
+            'key' => '', // Station Password
+            'station' => '', // Station ID
+            'url' => 'https://stations.windy.com/api/v2/observation/update', // Windy API v2 path
         ),
 
         // Windguru Settings
@@ -252,7 +252,7 @@ return (object)array(
 
     // Application/Database Version
     'version' => (object)array(
-        'app' => '3.9.4',
+        'app' => '3.9.5',
         'schema' => '3.3',
         'installHash' => null,
     ),

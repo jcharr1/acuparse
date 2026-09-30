@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 3.9.5
+
+### Changed
+
+- Windy uploader migrated to the Windy Stations API v2. The v1 API shuts down at the end of 2026.
+    - Requires your Windy Station ID and Station Password. Windy updates are disabled on upgrade until these are entered.
+    - The Station Password is sent as a Bearer token and is not logged.
+    - The Windy response HTTP status is now logged.
+
+### Fixed
+
+- Windy URL setting was being saved to the Windguru URL.
+- Windy Station ID field was limited to one character and was not enabled/disabled with the Windy toggle.
+
 ## [3.9.4](https://www.acuparse.com/releases/v3-9-4/) - 2023-07-12
 
 ### Fixed

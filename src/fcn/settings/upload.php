@@ -656,7 +656,7 @@
                                                 <input class="form-check-input" type="radio"
                                                        name="upload[windy][enabled]"
                                                        id="windy-updates-enabled-0" value="0"
-                                                       onclick='document.getElementById("windy-updates-id").disabled=true;document.getElementById("windy-updates-key").disabled=true;'
+                                                       onclick='document.getElementById("windy-updates-id").disabled=true;document.getElementById("windy-updates-station").disabled=true;document.getElementById("windy-updates-key").disabled=true;'
                                                     <?= ($config->upload->windy->enabled === false) ? 'checked="checked"' : false; ?>>
                                                 <label class="form-check-label btn btn-danger"
                                                        for="windy-updates-enabled-0">Disabled</label>
@@ -665,7 +665,7 @@
                                                 <input class="form-check-input" type="radio"
                                                        name="upload[windy][enabled]"
                                                        id="windy-updates-enabled-1" value="1"
-                                                       onclick='document.getElementById("windy-updates-id").disabled=false;document.getElementById("windy-updates-key").disabled=false;'
+                                                       onclick='document.getElementById("windy-updates-id").disabled=false;document.getElementById("windy-updates-station").disabled=false;document.getElementById("windy-updates-key").disabled=false;'
                                                     <?= ($config->upload->windy->enabled === true) ? 'checked="checked"' : false; ?>>
                                                 <label class="form-check-label btn btn-success"
                                                        for="windy-updates-enabled-1">Enabled</label>
@@ -685,7 +685,7 @@
                                                 <?= ($config->upload->windy->enabled === false) ? 'disabled="disabled"' : false; ?>
                                                    value="<?= $config->upload->windy->id; ?>">
                                             <small id="wc-updates-id-help" class="form-text text-muted">Your <a
-                                                        href="https://stations.windy.com/stations">Windy</a> ID</small>
+                                                        href="https://stations.windy.com/stations">Windy</a> public ID, used for the station link</small>
                                         </div>
                                     </div>
                                     <div class="row mt-2">
@@ -696,27 +696,28 @@
                                             <input type="text" class="form-control"
                                                    name="upload[windy][station]"
                                                    id="windy-updates-station"
-                                                   maxlength="1"
+                                                   maxlength="30"
+                                                   placeholder="Station ID"
                                                 <?= ($config->upload->windy->enabled === false) ? 'disabled="disabled"' : false; ?>
                                                    value="<?= $config->upload->windy->station; ?>">
-                                            <small id="windy-updates-key-help" class="form-text text-muted">Your
-                                                Windy Station ID. Default 0.
+                                            <small id="windy-updates-station-help" class="form-text text-muted">Your
+                                                Windy Station ID, from My Stations -> Station -> Connection.
                                             </small>
                                         </div>
                                         <div class="row mt-2">
                                             <div class="col-3">
-                                                <label class="col-form-label" for="windy-updates-key">API Key</label>
+                                                <label class="col-form-label" for="windy-updates-key">Station Password</label>
                                             </div>
                                             <div class="col">
                                                 <input type="text" class="form-control"
                                                        name="upload[windy][key]"
                                                        id="windy-updates-key"
                                                        maxlength="150"
-                                                       placeholder="XXX-API-KEY-XXX"
+                                                       placeholder="Station Password"
                                                     <?= ($config->upload->windy->enabled === false) ? 'disabled="disabled"' : false; ?>
                                                        value="<?= $config->upload->windy->key; ?>">
                                                 <small id="windy-updates-key-help" class="form-text text-muted">Your
-                                                    Windy API Key.
+                                                    Windy Station Password, from My Stations -> Station -> Connection.
                                                 </small>
                                             </div>
                                         </div>

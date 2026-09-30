@@ -40,17 +40,26 @@ $count = mysqli_num_rows(mysqli_query($conn, $sql));
 
 // Make sure update interval has passed since last update
 if ((strtotime($result['timestamp']) < strtotime('-5 minutes')) or ($count == 0)) {
-    // Build and send update
-    $windyQueryUrl = $config->upload->windy->url . '/' . $config->upload->windy->key;
-    $windyQuery = '?station=' . $config->upload->windy->station . '&tempf=' . $data->tempF . '&winddir=' . $data->windDEG . '&windspeedmph=' . $data->windSpeedMPH . '&baromin=' . $data->pressure_inHg . '&humidity=' . $data->relH . '&dewptf=' . $data->dewptF . '&rainin=' . $data->rainIN;
+    // Build and send update (Windy Stations API v2)
+    $windyQuery = '?id=' . urlencode($config->upload->windy->station) . '&tempf=' . $data->tempF . '&winddir=' . $data->windDEG . '&windspeedmph=' . $data->windSpeedMPH . '&baromin=' . $data->pressure_inHg . '&humidity=' . $data->relH . '&dewptf=' . $data->dewptF . '&rainin=' . $data->rainIN;
     if ($config->station->device === 0 && $config->station->primary_sensor === 0) {
         $windyQuery = $windyQuery . '&uv=' . $atlas->uvIndex;
     }
-    $windyQueryResult = file_get_contents($windyQueryUrl . $windyQuery);
+
+    // Station password is sent as a Bearer token so it is not logged with the query
+    $ch = curl_init($config->upload->windy->url . $windyQuery);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $config->upload->windy->key));
+    $windyQueryResult = curl_exec($ch);
+    $windyQueryResponseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+
+    $windyQueryResult = 'HTTP ' . $windyQueryResponseCode . ((empty($windyQueryResult)) ? '' : ': ' . $windyQueryResult);
 
     // Save to DB
     mysqli_query($conn,
-        "INSERT INTO `windy_updates` (`query`,`result`) VALUES ('$windyQuery', '$windyQueryResult')");
+        "INSERT INTO `windy_updates` (`query`,`result`) VALUES ('" . mysqli_real_escape_string($conn, $windyQuery) . "', '" . mysqli_real_escape_string($conn, substr($windyQueryResult, 0, 255)) . "')");
 
     // Log it
     syslog(LOG_NOTICE, "(EXTERNAL){Windy}: Query = $windyQuery | Response = $windyQueryResult");

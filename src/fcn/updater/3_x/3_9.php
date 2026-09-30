@@ -63,4 +63,18 @@ switch ($config->version->app) {
         $config->version->app = '3.9.4';
         $notes .= '<li><strong>' . $config->version->app . '</strong> - ' . 'Bug fixes';
 
+    // Update from 3.9.4 to 3.9.5
+    case '3.9.4':
+        $config->version->app = '3.9.5';
+        // Windy API v1 shuts down at the end of 2026. v2 needs the Station ID and Station Password,
+        // which cannot be derived from the old API Key and station index, so disable until re-entered.
+        if ($config->upload->windy->enabled === true) {
+            $config->upload->windy->enabled = false;
+            $notes .= '<li><strong>' . $config->version->app . '</strong> - ' . 'Windy updates have been DISABLED. Windy API v2 requires your Station ID and Station Password. Re-enter them in Settings and re-enable. See the <a href="https://docs.acuparse.com/external/WINDY/">Windy Docs</a>.';
+        }
+        $config->upload->windy->key = '';
+        $config->upload->windy->station = '';
+        $config->upload->windy->url = 'https://stations.windy.com/api/v2/observation/update';
+        $notes .= '<li><strong>' . $config->version->app . '</strong> - ' . 'Windy uploader migrated to API v2';
+
 }
