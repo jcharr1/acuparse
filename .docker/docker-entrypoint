@@ -68,7 +68,7 @@ if [ "$1" = 'acuparse' ]; then
 
   function _start_system_services() {
     echo "Starting syslog ..."
-    service rsyslog start
+    rsyslogd
 
     echo "Starting cron ..."
     service cron start
@@ -79,7 +79,7 @@ if [ "$1" = 'acuparse' ]; then
     echo "Checking Services after startup ..."
 
     echo "Checking syslog ..."
-    service rsyslog status || exit 1
+    pgrep -x rsyslogd >/dev/null || exit 1
 
     echo "Checking cron ..."
     service cron status || exit 1
