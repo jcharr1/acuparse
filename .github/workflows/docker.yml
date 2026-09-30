@@ -16,7 +16,29 @@ permissions:
   packages: write
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+
+      - name: PHP syntax check
+        run: find src cron -name '*.php' -not -path 'src/pub/lib/*' -print0 | xargs -0 -n1 php -d display_errors=stderr -l > /dev/null
+
+      # Report only: lists PHP 8.4 compatibility issues without failing the build
+      - name: PHP 8.4 compatibility report
+        continue-on-error: true
+        run: |
+          composer global config --no-interaction allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer global require --no-interaction --quiet "phpcompatibility/php-compatibility:dev-develop" dealerdirect/phpcodesniffer-composer-installer
+          "$(composer global config bin-dir --absolute --quiet)/phpcs" --standard=PHPCompatibility --runtime-set testVersion 8.4 --extensions=php --ignore='src/pub/lib/*' --report=summary --report-full src cron
+
   build:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

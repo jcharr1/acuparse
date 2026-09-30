@@ -24,8 +24,8 @@
 # Acuparse Dockerfile
 ##
 
-ARG OS_VERSION=bullseye
-FROM php:7.4-apache-${OS_VERSION}
+ARG OS_VERSION=trixie
+FROM php:8.4-apache-${OS_VERSION}
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -47,9 +47,7 @@ org.label-schema.vendor="Acuparse"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Bullseye is EOL and its security repo is being moved to archive.debian.org; it now 404s, so build from main/updates only.
 RUN echo "Install and Configure PACKAGES" \
-&& sed -i '/-security/d' /etc/apt/sources.list \
 && apt-get update -qq && apt-get install -yqq --no-install-recommends \
 mariadb-client \
 rsyslog \

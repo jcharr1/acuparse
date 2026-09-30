@@ -67,6 +67,9 @@ if (!isset($conn)) {
         ini_set('mysqlnd_qc.enable_qc', 1);
         ini_set('mysqlnd_qc.cache_by_default', 1);
 
+        // PHP 8.1+ defaults to throwing mysqli exceptions; keep the return-false behaviour this code relies on
+        mysqli_report(MYSQLI_REPORT_OFF);
+
         $conn = mysqli_connect($config->mysql->host, $config->mysql->username, $config->mysql->password,
             $config->mysql->database);
         if (!$conn) {
